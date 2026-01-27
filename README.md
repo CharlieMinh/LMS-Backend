@@ -1,1 +1,28 @@
-# LMS-Backend
+# LMS Backend 
+
+## 📌 Overview
+RESTful API for a Learning Management System (LMS).
+Provides authentication, course management, enrollment, and learning progress tracking.
+
+## 🛠 Tech Stack
+- ASP.NET Core Web API (.NET 9)
+- C#
+- Entity Framework Core
+- PostgreSQL
+- JWT Authentication
+
+## 🧩 Responsibilities
+- Authentication & Authorization
+- Course & lesson management
+- Enrollment & progress tracking
+- Assignment & quiz APIs
+
+## 📂 Project Structure
+src/
+ └── LMS.API/
+
+## 🚀 Status
+Phase 0 – Preparation
+
+## 📄 Author
+Pham Van Minh
