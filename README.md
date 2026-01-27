@@ -17,12 +17,5 @@ Provides authentication, course management, enrollment, and learning progress tr
 - Enrollment & progress tracking
 - Assignment & quiz APIs
 
-## 📂 Project Structure
-src/
- └── LMS.API/
-
-## 🚀 Status
-Phase 0 – Preparation
-
 ## 📄 Author
 Pham Van Minh
