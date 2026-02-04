@@ -1,0 +1,21 @@
+# Visual Studio Files
+.vs/
+.vscode/
+
+# Build results
+[Bb]in/
+[Oo]bj/
+/out/
+/artifacts/
+
+# User-specific files
+*.user
+*.userosscache
+*.sln.docstates
+
+# IDE files
+*.suo
+
+# Environment Variables
+.env
+appsettings.Development.json
