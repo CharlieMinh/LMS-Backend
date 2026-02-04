@@ -1,12 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LMS.Application.Interfaces.Services;
+using LMS.Application.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LMS.Application
 {
-    internal class DependencyInjection
+    public static class DependencyInjection
     {
+        public static IServiceCollection AddApplication(this IServiceCollection services)
+        {
+            services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<ILessonService, LessonService>();
+            return services;
+        }
     }
 }

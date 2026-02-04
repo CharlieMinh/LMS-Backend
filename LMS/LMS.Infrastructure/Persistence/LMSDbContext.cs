@@ -19,12 +19,14 @@ namespace LMS.Infrastructure.Persistence
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<Course> Courses { get; set; }
+        public DbSet<Lesson> Lessons { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Cấu hình bảng UserRole (Khóa chính phức hợp)
+             // Cấu hình bảng UserRole (Khóa chính phức hợp)
             modelBuilder.Entity<UserRole>()
                 .HasKey(ur => new { ur.UserId, ur.RoleId });
 
@@ -37,6 +39,13 @@ namespace LMS.Infrastructure.Persistence
                 .HasOne(ur => ur.Role)
                 .WithMany(r => r.UserRoles)
                 .HasForeignKey(ur => ur.RoleId);
+
+            // Cấu hình Course - Lesson (1-n)
+            modelBuilder.Entity<Course>()
+                .HasMany(c => c.Lessons)
+                .WithOne(l => l.Course)
+                .HasForeignKey(l => l.CourseId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Seed dữ liệu mẫu (Optional: Tạo sẵn 3 Role)
             // Fix: Use static DateTime to avoid PendingModelChangesWarning
