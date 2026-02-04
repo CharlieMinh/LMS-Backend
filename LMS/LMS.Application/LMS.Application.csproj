@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LMS.Domain\LMS.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Common\Exceptions\" />
+    <Folder Include="Features\Auth\Login\" />
+    <Folder Include="Features\Auth\Register\" />
+    <Folder Include="Features\Courses\CreateCourse\" />
+    <Folder Include="Features\Courses\GetCourseDetail\" />
+    <Folder Include="Features\Courses\UpdateCourse\" />
+    <Folder Include="Features\Lessons\" />
+    <Folder Include="Features\Enrollments\" />
+    <Folder Include="Features\Quizzes\" />
+    <Folder Include="Features\Progress\" />
+    <Folder Include="DTOs\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+  </ItemGroup>
+
+</Project>
