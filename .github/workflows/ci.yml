@@ -1,0 +1,32 @@
+name: LMS Backend CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - 'feature/*'
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build:
+    name: Build Backend (.NET 9)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore LMS/LMS.sln
+
+      - name: Build
+        run: dotnet build LMS/LMS.sln --configuration Release --no-restore
