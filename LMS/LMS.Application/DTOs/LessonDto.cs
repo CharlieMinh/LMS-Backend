@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 
 namespace LMS.Application.DTOs
 {
-    public class CourseDto
+    public class LessonDto
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
-        public string? Description { get; set; }
-        public decimal Price { get; set; }
+        public string? Content { get; set; }
+        public int CourseId { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 }

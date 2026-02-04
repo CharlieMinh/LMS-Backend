@@ -6,6 +6,8 @@ using System.Text;
 using LMS.Application.Interfaces.Services; 
 using LMS.Infrastructure.Identity;
 using Microsoft.OpenApi.Models;
+using LMS.Infrastructure;
+using LMS.Application; // Import Application DI
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +47,12 @@ builder.Services.AddSwaggerGen(c =>
 // 2. CẤU HÌNH DATABASE (Sửa LMSContext -> LMSDbContext)
 builder.Services.AddDbContext<LMSDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Đăng ký Infrastructure Services (bao gồm Repository)
+builder.Services.AddInfrastructure();
+
+// Đăng ký Application Services (CourseService, LessonService...)
+builder.Services.AddApplication();
 
 // --- ĐĂNG KÝ SERVICE ---
 // Đăng ký JwtService (để Controller gọi được)

@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using LMS.Domain.Entities;
 
 namespace LMS.Application.Interfaces.Repositories
 {
-    internal class ICourseRepository
+    public interface ICourseRepository
     {
+        Task<IEnumerable<Course>> GetAllAsync();
+        Task<Course?> GetByIdAsync(int id);
+        Task<Course> AddAsync(Course course);
+        Task UpdateAsync(Course course);
+        Task DeleteAsync(Course course);
     }
 }
