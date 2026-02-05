@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,14 +18,14 @@ namespace LMS.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Lesson>> GetByCourseIdAsync(int courseId)
+        public async Task<IEnumerable<Lesson>> GetByCourseIdAsync(Guid courseId)
         {
             return await _context.Lessons
                 .Where(l => l.CourseId == courseId)
                 .ToListAsync();
         }
 
-        public async Task<Lesson?> GetByIdAsync(int id)
+        public async Task<Lesson?> GetByIdAsync(Guid id)
         {
             return await _context.Lessons
                 .Include(l => l.Course)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using LMS.Application.DTOs;
 using LMS.Application.Interfaces.Services;
@@ -19,13 +20,13 @@ namespace LMS.API.Controllers
         }
 
         [HttpGet("course/{courseId}")]
-        public async Task<ActionResult<IEnumerable<LessonDto>>> GetByCourseId(int courseId)
+        public async Task<ActionResult<PagedResult<LessonDto>>> GetByCourseId(Guid courseId, [FromQuery] PagedRequest request)
         {
-            return Ok(await _lessonService.GetLessonsByCourseIdAsync(courseId));
+            return Ok(await _lessonService.GetLessonsByCourseIdAsync(courseId, request));
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<LessonDto>> GetById(int id)
+        public async Task<ActionResult<LessonDto>> GetById(Guid id)
         {
             var lesson = await _lessonService.GetLessonByIdAsync(id);
             if (lesson == null) return NotFound();
@@ -49,7 +50,7 @@ namespace LMS.API.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Instructor,Admin")]
-        public async Task<IActionResult> Update(int id, UpdateLessonDto dto)
+        public async Task<IActionResult> Update(Guid id, UpdateLessonDto dto)
         {
             try
             {
@@ -64,7 +65,7 @@ namespace LMS.API.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Instructor,Admin")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             try
             {

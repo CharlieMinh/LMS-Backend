@@ -24,7 +24,7 @@ namespace LMS.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Course?> GetByIdAsync(int id)
+        public async Task<Course?> GetByIdAsync(Guid id)
         {
             return await _context.Courses
                 .Include(c => c.Lessons)

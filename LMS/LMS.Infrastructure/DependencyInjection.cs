@@ -10,6 +10,11 @@ namespace LMS.Infrastructure
         {
             services.AddScoped<ICourseRepository, CourseRepository>();
             services.AddScoped<ILessonRepository, LessonRepository>();
+            services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
+            services.AddScoped<ICourseProgressRepository, CourseProgressRepository>();
+            services.AddScoped<ILessonProgressRepository, LessonProgressRepository>();
+            services.AddScoped<IQuizRepository, QuizRepository>();
+            services.AddScoped<ILessonResourceRepository, LessonResourceRepository>();
             return services;
         }
     }

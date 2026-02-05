@@ -10,6 +10,10 @@ namespace LMS.Application
         {
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<ILessonService, LessonService>();
+            services.AddScoped<IEnrollmentService, EnrollmentService>();
+            services.AddScoped<IProgressService, ProgressService>();
+            services.AddScoped<IQuizService, QuizService>();
+            services.AddScoped<ILessonResourceService, LessonResourceService>();
             return services;
         }
     }
