@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using LMS.Application.Interfaces.Services;
@@ -19,7 +20,7 @@ namespace LMS.Infrastructure.Identity
             _configuration = configuration;
         }
 
-        public string GenerateToken(User user)
+        public string GenerateToken(User user, IEnumerable<string> roles)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
             var keyStr = jwtSettings["Key"];
@@ -27,24 +28,35 @@ namespace LMS.Infrastructure.Identity
             var audience = jwtSettings["Audience"];
 
             // Ensure key is not null
-            if (string.IsNullOrEmpty(keyStr)) throw new ArgumentNullException("Jwt:Key is missing in configuration");
+            if (string.IsNullOrEmpty(keyStr)) 
+                throw new ArgumentNullException("Jwt:Key is missing in configuration");
 
             var key = Encoding.UTF8.GetBytes(keyStr);
             
+            // Build claims list
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim("name", user.FullName), // Add full name claim
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
+
+            // Add role claims - CRITICAL for [Authorize(Roles)] to work
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(60), // Expiration time
+                Expires = DateTime.UtcNow.AddMinutes(60), // 1 hour expiration
                 Issuer = issuer,
                 Audience = audience,
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(key), 
+                    SecurityAlgorithms.HmacSha256Signature)
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();

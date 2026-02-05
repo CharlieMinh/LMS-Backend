@@ -47,8 +47,11 @@ namespace LMS.Infrastructure.Persistence
                 .HasForeignKey(l => l.CourseId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Seed dữ liệu mẫu (Optional: Tạo sẵn 3 Role)
-            // Fix: Use static DateTime to avoid PendingModelChangesWarning
+            // Seed dữ liệu mặc định cho 3 Roles
+            // IMPORTANT: Các roles này cần tồn tại trước khi register user
+            // - Admin (id=1): Quản trị viên hệ thống, full access
+            // - Instructor (id=2): Giảng viên, tạo và quản lý courses
+            // - Student (id=3): Học viên, đăng ký và học courses
             var seededDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             modelBuilder.Entity<Role>().HasData(
                 new Role { Id = 1, Name = "Admin", CreatedAt = seededDate },

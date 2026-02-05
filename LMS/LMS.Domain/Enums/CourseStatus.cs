@@ -1,12 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Domain.Enums
+﻿namespace LMS.Domain.Enums
 {
-    internal class CourseStatus
+    /// <summary>
+    /// Course publication status
+    /// </summary>
+    public enum CourseStatus
     {
+        /// <summary>
+        /// Course is in draft mode, not visible to students
+        /// </summary>
+        Draft = 0,
+
+        /// <summary>
+        /// Course is published and available for enrollment
+        /// </summary>
+        Published = 1,
+
+        /// <summary>
+        /// Course is archived, no longer accepting new enrollments
+        /// </summary>
+        Archived = 2
     }
 }

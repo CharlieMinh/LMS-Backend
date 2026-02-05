@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\LMS",
+    "\\LMS\\LMS.API",
+    "\\LMS\\LMS.Domain",
+    "\\LMS\\LMS.Domain\\Common",
+    "\\LMS\\LMS.Domain\\Entities",
+    "\\LMS\\LMS.Infrastructure",
+    "\\LMS\\LMS.Infrastructure\\Persistence",
+    "\\LMS\\LMS.Infrastructure\\Repositories"
+  ],
+  "SelectedNode": "\\LMS\\LMS.sln",
+  "PreviewInSolutionExplorer": false
+}
