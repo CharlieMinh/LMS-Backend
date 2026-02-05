@@ -1,12 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Domain.Enums
+﻿namespace LMS.Domain.Enums
 {
-    internal class QuestionType
+    /// <summary>
+    /// Types of quiz questions
+    /// </summary>
+    public enum QuestionType
     {
+        /// <summary>
+        /// Multiple choice question with one or more correct answers
+        /// </summary>
+        MultipleChoice = 0,
+
+        /// <summary>
+        /// True or False question
+        /// </summary>
+        TrueFalse = 1,
+
+        /// <summary>
+        /// Essay/text-based question requiring manual grading
+        /// </summary>
+        Essay = 2
     }
 }

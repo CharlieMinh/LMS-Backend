@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LMS.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class CoursesController : ControllerBase
     {

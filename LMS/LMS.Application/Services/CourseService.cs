@@ -26,7 +26,9 @@ namespace LMS.Application.Services
                 Id = c.Id,
                 Title = c.Title,
                 Description = c.Description,
-                Price = c.Price,
+                ThumbnailUrl = c.ThumbnailUrl,
+                Status = c.Status,
+                InstructorId = c.InstructorId,
                 CreatedAt = c.CreatedAt
             });
         }
@@ -41,7 +43,9 @@ namespace LMS.Application.Services
                 Id = course.Id,
                 Title = course.Title,
                 Description = course.Description,
-                Price = course.Price,
+                ThumbnailUrl = course.ThumbnailUrl,
+                Status = course.Status,
+                InstructorId = course.InstructorId,
                 CreatedAt = course.CreatedAt
             };
         }
@@ -52,7 +56,9 @@ namespace LMS.Application.Services
             {
                 Title = dto.Title,
                 Description = dto.Description,
-                Price = dto.Price
+                ThumbnailUrl = dto.ThumbnailUrl,
+                Status = dto.Status,
+                InstructorId = dto.InstructorId
             };
 
             await _courseRepository.AddAsync(course);
@@ -62,7 +68,9 @@ namespace LMS.Application.Services
                 Id = course.Id,
                 Title = course.Title,
                 Description = course.Description,
-                Price = course.Price,
+                ThumbnailUrl = course.ThumbnailUrl,
+                Status = course.Status,
+                InstructorId = course.InstructorId,
                 CreatedAt = course.CreatedAt
             };
         }
@@ -74,7 +82,8 @@ namespace LMS.Application.Services
 
             course.Title = dto.Title;
             course.Description = dto.Description;
-            course.Price = dto.Price;
+            course.ThumbnailUrl = dto.ThumbnailUrl;
+            course.Status = dto.Status;
             course.UpdatedAt = DateTime.UtcNow;
 
             await _courseRepository.UpdateAsync(course);

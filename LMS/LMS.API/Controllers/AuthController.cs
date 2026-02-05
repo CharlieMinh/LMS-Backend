@@ -1,10 +1,11 @@
-﻿using LMS.Application.Features.Auth; // Chứa DTO
+﻿using LMS.Application.Features.Auth; 
 using LMS.Application.Interfaces.Services;
 using LMS.Domain.Entities;
+using LMS.Domain.Enums;
 using LMS.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BCrypt.Net; // Dùng để hash password
+using BCrypt.Net; 
 
 namespace LMS.API.Controllers
 {
@@ -40,42 +41,67 @@ namespace LMS.API.Controllers
                 FullName = request.FullName,
                 Email = request.Email,
                 PasswordHash = passwordHash,
-                Status = "Active",
+                Status = UserStatus.Active,
                 CreatedAt = DateTime.UtcNow
             };
 
-            // 4. Lưu vào DB
+            // 4. Lưu User vào DB
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return Ok(new { Message = "Đăng ký thành công!" });
+            // 5. TASK 6: Assign default "Student" role (id=3)
+            // Mọi user đăng ký mới đều là Student
+            var studentRoleId = 3;
+            var userRole = new UserRole
+            {
+                UserId = user.Id,
+                RoleId = studentRoleId
+            };
+            _context.UserRoles.Add(userRole);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Message = "Đăng ký thành công! Bạn đã được gán vai trò Student." });
         }
 
         // POST: api/v1/auth/login
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
         {
-            // 1. Tìm user theo email
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+            // 1. TASK 7: Tìm user và LOAD ROLES từ database
+            // Include() để eager load UserRoles và Role navigation properties
+            var user = await _context.Users
+                .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u => u.Email == request.Email);
+                
             if (user == null)
             {
                 return Unauthorized("Email hoặc mật khẩu không đúng.");
             }
 
-            // 2. Kiểm tra password (So sánh pass nhập vào với hash trong DB)
+            // 2. Kiểm tra password
             bool isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
             if (!isPasswordValid)
             {
                 return Unauthorized("Email hoặc mật khẩu không đúng.");
             }
 
-            // 3. Tạo Token
-            var token = _jwtService.GenerateToken(user);
+            // 3. Extract role names từ UserRoles
+            var roles = user.UserRoles.Select(ur => ur.Role.Name).ToList();
+
+            // 4. TASK 7: Generate token với roles
+            var token = _jwtService.GenerateToken(user, roles);
 
             return Ok(new
             {
                 Token = token,
-                User = new { user.Id, user.FullName, user.Email }
+                User = new 
+                { 
+                    user.Id, 
+                    user.FullName, 
+                    user.Email,
+                    Roles = roles // Trả về roles để client biết
+                }
             });
         }
     }
