@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LMS.Application.Common;
 using LMS.Application.DTOs;
 using LMS.Application.Interfaces.Repositories;
 using LMS.Application.Interfaces.Services;
@@ -18,36 +19,33 @@ namespace LMS.Application.Services
             _courseRepository = courseRepository;
         }
 
-        public async Task<IEnumerable<CourseDto>> GetAllCoursesAsync()
+        public async Task<PagedResult<CourseDto>> GetCoursesAsync(PagedRequest request)
         {
             var courses = await _courseRepository.GetAllAsync();
-            return courses.Select(c => new CourseDto
+            var query = courses.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(request.Search))
             {
-                Id = c.Id,
-                Title = c.Title,
-                Description = c.Description,
-                ThumbnailUrl = c.ThumbnailUrl,
-                Status = c.Status,
-                InstructorId = c.InstructorId,
-                CreatedAt = c.CreatedAt
-            });
+                var term = request.Search.ToLower();
+                query = query.Where(c => (c.Title != null && c.Title.ToLower().Contains(term)) || (c.Description != null && c.Description.ToLower().Contains(term)));
+            }
+
+            var sorted = query.ApplySorting(request);
+            var paged = sorted.ToPagedResult(request);
+
+            return new PagedResult<CourseDto>
+            {
+                Items = paged.Items.Select(MapToDto).ToList(),
+                PageNumber = paged.PageNumber,
+                PageSize = paged.PageSize,
+                TotalCount = paged.TotalCount
+            };
         }
 
-        public async Task<CourseDto?> GetCourseByIdAsync(int id)
+        public async Task<CourseDto?> GetCourseByIdAsync(Guid id)
         {
             var course = await _courseRepository.GetByIdAsync(id);
-            if (course == null) return null;
-
-            return new CourseDto
-            {
-                Id = course.Id,
-                Title = course.Title,
-                Description = course.Description,
-                ThumbnailUrl = course.ThumbnailUrl,
-                Status = course.Status,
-                InstructorId = course.InstructorId,
-                CreatedAt = course.CreatedAt
-            };
+            return course == null ? null : MapToDto(course);
         }
 
         public async Task<CourseDto> CreateCourseAsync(CreateCourseDto dto)
@@ -62,20 +60,10 @@ namespace LMS.Application.Services
             };
 
             await _courseRepository.AddAsync(course);
-
-            return new CourseDto
-            {
-                Id = course.Id,
-                Title = course.Title,
-                Description = course.Description,
-                ThumbnailUrl = course.ThumbnailUrl,
-                Status = course.Status,
-                InstructorId = course.InstructorId,
-                CreatedAt = course.CreatedAt
-            };
+            return MapToDto(course);
         }
 
-        public async Task UpdateCourseAsync(int id, UpdateCourseDto dto)
+        public async Task UpdateCourseAsync(Guid id, UpdateCourseDto dto)
         {
             var course = await _courseRepository.GetByIdAsync(id);
             if (course == null) throw new KeyNotFoundException("Course not found");
@@ -89,12 +77,24 @@ namespace LMS.Application.Services
             await _courseRepository.UpdateAsync(course);
         }
 
-        public async Task DeleteCourseAsync(int id)
+        public async Task DeleteCourseAsync(Guid id)
         {
             var course = await _courseRepository.GetByIdAsync(id);
             if (course == null) throw new KeyNotFoundException("Course not found");
 
             await _courseRepository.DeleteAsync(course);
         }
+
+        private static CourseDto MapToDto(Course course) => new CourseDto
+        {
+            Id = course.Id,
+            Title = course.Title,
+            Description = course.Description,
+            ThumbnailUrl = course.ThumbnailUrl,
+            Status = course.Status,
+            InstructorId = course.InstructorId,
+            CreatedAt = course.CreatedAt,
+            UpdatedAt = course.UpdatedAt
+        };
     }
 }

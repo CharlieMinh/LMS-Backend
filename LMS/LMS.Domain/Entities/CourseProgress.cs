@@ -1,12 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using LMS.Domain.Common;
 
 namespace LMS.Domain.Entities
 {
-    internal class CourseProgress
+    /// <summary>
+    /// Aggregated progress for a course enrollment
+    /// </summary>
+    public class CourseProgress : BaseEntity<Guid>
     {
+        public Guid EnrollmentId { get; set; }
+        public int CompletedLessons { get; set; }
+        public int TotalLessons { get; set; }
+        public int ProgressPercent { get; set; }
+
+        // Navigation
+        public Enrollment Enrollment { get; set; } = null!;
     }
 }

@@ -19,5 +19,9 @@ namespace LMS.Domain.Entities
         // Navigation Properties
         public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
         public ICollection<Course> CoursesAsInstructor { get; set; } = new List<Course>();
+        public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
+        public ICollection<QuizResult> QuizResults { get; set; } = new List<QuizResult>();
+        public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
+        public ICollection<PasswordResetToken> PasswordResetTokens { get; set; } = new List<PasswordResetToken>();
     }
 }

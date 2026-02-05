@@ -8,11 +8,22 @@ using LMS.Infrastructure.Identity;
 using Microsoft.OpenApi.Models;
 using LMS.Infrastructure;
 using LMS.Application; // Import Application DI
+using LMS.Domain.Entities;
+using LMS.Domain.Enums;
+using BCrypt.Net;
+using LMS.API.Middlewares;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddProblemDetails();
+
+// FluentValidation
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -83,6 +94,9 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
+// Apply migrations & seed admin
+await SeedAdminAsync(app);
+
 // 3. Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -92,9 +106,48 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseMiddleware<ExceptionMiddleware>();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
+static async Task SeedAdminAsync(WebApplication app)
+{
+    using var scope = app.Services.CreateScope();
+    var context = scope.ServiceProvider.GetRequiredService<LMSDbContext>();
+    await context.Database.MigrateAsync();
+
+    // Ensure roles exist (already seeded by migration, but safeguard)
+    var roles = new[] { "Admin", "Instructor", "Student" };
+    foreach (var roleName in roles)
+    {
+        if (!await context.Roles.AnyAsync(r => r.Name == roleName))
+        {
+            context.Roles.Add(new Role { Name = roleName, CreatedAt = DateTime.UtcNow });
+        }
+    }
+
+    await context.SaveChangesAsync();
+
+    var adminEmail = "admin@lms.local";
+    var adminRoleId = await context.Roles.Where(r => r.Name == "Admin").Select(r => r.Id).FirstAsync();
+
+    if (!await context.Users.AnyAsync(u => u.Email == adminEmail))
+    {
+        var adminUser = new User
+        {
+            FullName = "Administrator",
+            Email = adminEmail,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
+            Status = UserStatus.Active
+        };
+
+        context.Users.Add(adminUser);
+        context.UserRoles.Add(new UserRole { UserId = adminUser.Id, RoleId = adminRoleId });
+        await context.SaveChangesAsync();
+    }
+}
